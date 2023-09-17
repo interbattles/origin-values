@@ -4,7 +4,7 @@ import { get } from './items.js'
 import { print } from "./globals.js";
 
 let cachedResponse = {
-    iat: Date.now(),
+    iat: 0,
     items: {}
 };
 
