@@ -1,7 +1,7 @@
 import { QuickDB } from 'quick.db';
 
 const db = new QuickDB({
-    filePath: 'origin.sqlite',
+    filePath: '/mount/values.sqlite',
 });
 
 export default db;
