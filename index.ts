@@ -1,7 +1,7 @@
 import * as items from './lib/items.js';
 import db from './lib/db.js'
+import server from './lib/server.js'
 import { sleep, repeat, print } from "./lib/globals.js"
-import { Worker } from 'worker_threads';
 
 const getAllItems = async () => (await db.get('items')) || {};
 
@@ -85,4 +85,4 @@ const main = async () => {
 }
 
 main()
-new Worker('./lib/server.js')
+server()
