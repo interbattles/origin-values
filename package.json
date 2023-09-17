@@ -1,0 +1,31 @@
+{
+  "name": "origin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "devDependencies": {
+    "ts-node": "10.9.1",
+    "typescript": "5.2.2"
+  },
+  "dependencies": {
+    "@types/better-sqlite3": "^7.6.5",
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.5.9",
+    "@types/superagent": "^4.1.18",
+    "better-sqlite3": "8.6.0",
+    "chalk": "^5.3.0",
+    "express": "^4.18.2",
+    "mongoose": "^7.5.2",
+    "mysql2": "^3.6.1",
+    "prisma": "^5.2.0",
+    "quick.db": "^9.1.7",
+    "superagent": "^8.1.2"
+  }
+}
