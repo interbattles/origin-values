@@ -65,6 +65,6 @@ app.get('/', async (req, resp) => {
     return resp.send(response)
 });
 
-export default () => app.listen(3000, () => {
+app.listen(3000, () => {
     print('Server started on port 3000');
 })
