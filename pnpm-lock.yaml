@@ -505,7 +505,7 @@ packages:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
     dev: false
 
-  /ipaddr.ts@1.9.1:
+  /ipaddr.js@1.9.1:
     resolution: {integrity: sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g==}
     engines: {node: '>= 0.10'}
     dev: false
@@ -616,7 +616,7 @@ packages:
     engines: {node: '>= 0.10'}
     dependencies:
       forwarded: 0.2.0
-      ipaddr.ts: 1.9.1
+      ipaddr.js: 1.9.1
     dev: false
 
   /qs@6.11.0:
