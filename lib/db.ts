@@ -1,3 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import { QuickDB } from 'quick.db';
 
-export default new PrismaClient();
+const db = new QuickDB({
+    filePath: '/mount/values.sqlite',
+});
+
+export default db;

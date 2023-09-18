@@ -4,7 +4,7 @@ import { get } from './items.ts'
 import { print } from "./globals.ts";
 
 let cachedResponse = {
-    iat: Date.now(),
+    iat: 0,
     items: {}
 };
 
@@ -27,11 +27,7 @@ app.get('/', async (req, resp) => {
     if (cachedResponse.iat && Date.now() - cachedResponse.iat < 1000 * 60 * 5)
         return resp.send(cachedResponse);
 
-    const items = await db.item.findMany({
-        include: {
-            points: true
-        }
-    });
+    const items = await db.get('items');
 
     let response: {
         iat: number
@@ -69,6 +65,6 @@ app.get('/', async (req, resp) => {
     return resp.send(response)
 });
 
-export default () => app.listen(3000, () => {
+app.listen(3000, () => {
     print('Server started on port 3000');
 })

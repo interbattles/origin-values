@@ -1,7 +1,7 @@
-import * as items from './lib/items.ts';
-import db from './lib/db.ts'
-import { sleep, repeat, print } from "./lib/globals.ts"
-import server from './lib/server.ts'
+import * as items from './lib/items.js';
+import db from './lib/db.js'
+import server from './lib/server.js'
+import { sleep, repeat, print } from "./lib/globals.js"
 
 const getAllItems = async () => await db.item.findMany()
 
