@@ -12,9 +12,7 @@
       "strict": false,
       "noImplicitAny": true,
       "useUnknownInCatchVariables": false,
-      "inlineSourceMap": true,
-      "allowImportingTsExtensions": true,
-      "noEmit": true
+      "inlineSourceMap": true
     },
     "ts-node": {
         "esm": true,

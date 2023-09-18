@@ -1,6 +1,6 @@
 import superagent from 'superagent'
-import { print } from './globals.ts'
-import type { ItemDetails } from './globals.ts'
+import { print } from './globals.js'
+import type { ItemDetails } from './globals.js'
 
 const agent = superagent.agent().set('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36')
 

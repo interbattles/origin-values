@@ -52,7 +52,7 @@ const updateMissingItems = async () => {
 const handleNewSales = async () => {
     const newSales = await items.fetchAllRecentSales();
     if (!newSales) return;
-
+    
     for (const saleData of newSales) {
         const [
             timestamp,
