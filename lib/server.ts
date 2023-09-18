@@ -1,7 +1,7 @@
 import express from 'express';
-import db from './db.js';
-import { get } from './items.js'
-import { print } from "./globals.js";
+import db from './db.ts';
+import { get } from './items.ts'
+import { print } from "./globals.ts";
 
 let cachedResponse = {
     iat: Date.now(),
@@ -27,7 +27,11 @@ app.get('/', async (req, resp) => {
     if (cachedResponse.iat && Date.now() - cachedResponse.iat < 1000 * 60 * 5)
         return resp.send(cachedResponse);
 
-    const items = await db.get('items');
+    const items = await db.item.findMany({
+        include: {
+            points: true
+        }
+    });
 
     let response: {
         iat: number
@@ -65,6 +69,6 @@ app.get('/', async (req, resp) => {
     return resp.send(response)
 });
 
-app.listen(3000, () => {
+export default () => app.listen(3000, () => {
     print('Server started on port 3000');
 })

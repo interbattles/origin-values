@@ -1,0 +1,25 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:values.sqlite"
+}
+
+model Sale {
+  id        BigInt  @id
+  timestamp BigInt
+  rap       Int
+  price     Int
+  Item      Item?   @relation(fields: [itemId], references: [id])
+  itemId    BigInt?
+}
+
+model Item {
+  id     BigInt @id
+  points Sale[]
+}

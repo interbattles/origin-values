@@ -1,16 +1,16 @@
-import * as items from './lib/items.js';
-import db from './lib/db.js'
-import { sleep, repeat, print } from "./lib/globals.js"
-import { Worker } from 'worker_threads';
+import * as items from './lib/items.ts';
+import db from './lib/db.ts'
+import { sleep, repeat, print } from "./lib/globals.ts"
+import server from './lib/server.ts'
 
-const getAllItems = async () => (await db.get('items')) || {};
+const getAllItems = async () => await db.item.findMany()
 
 const updateMissingItems = async () => {
-    const itemsStored = Object.keys(await getAllItems());
+    const itemsStored = await getAllItems()
     const itemDetails = Object.values(await items.refreshItemDetails());
 
     const missingItems = itemDetails
-        .filter(roliItem => !itemsStored.find(item => item === roliItem.id));
+        .filter(roliItem => !itemsStored.find(item => String(item.id) === roliItem.id));
 
     for (const missingItem of missingItems) {
         print(`Scraping missing data for "${missingItem.name}" [${missingItems.findIndex((item) => item.id === missingItem.id)}/${missingItems.length}]`);
@@ -32,8 +32,16 @@ const updateMissingItems = async () => {
             price: allPoints.sale_price_list[index],
         }));
 
-        // store the data for later use
-        await db.set(`items.${missingItem.id}.points`, mappedPoints);
+        for(let point of mappedPoints) {
+            await db.sale.create({
+                data: {
+                    id: point.saleId,
+                    timestamp: point.timestamp,
+                    rap: point.rap,
+                    price: point.price
+                }
+            })
+        }
 
         print(`Saved ${mappedPoints.length} points for "${missingItem.name}" (${missingItem.id})...`);
 
@@ -54,21 +62,28 @@ const handleNewSales = async () => {
             newRap,
             saleId,
         ] = saleData;
-        const itemSales = await db.get(`items.${itemId}.points`);
-        if (!itemSales) {
-            print(`Found sale for ${itemId}, but previous data hasn't been scraped yet`);
-            continue;
-        }
+        if(!await db.item.findFirst({
+            select: { id: true },
+            where: { id: itemId }
+        })) continue; 
+        const itemSales = await db.sale.findMany({
+            where: {
+                itemId
+            }
+        })
 
         // check if sale is a duplicate
-        if (itemSales.find((sale: { saleId: any; }) => sale.saleId === saleId)) continue;
+        if (itemSales.find((sale => String(sale.id) === saleId))) continue;
 
         const estimatedPrice = oldRap + (newRap - oldRap) * 10;
-        await db.push(`items.${itemId}.points`, {
-            saleId,
-            timestamp,
-            rap: newRap,
-            price: estimatedPrice,
+        await db.sale.create({
+            data: {
+                id: saleId,
+                timestamp,
+                rap: newRap,
+                price: estimatedPrice,
+                itemId
+            }
         });
 
         print(`Found new sale for ${itemId} (${oldRap.toLocaleString()} -> ${newRap.toLocaleString()} | approx. ${estimatedPrice.toLocaleString()})`);
@@ -85,4 +100,4 @@ const main = async () => {
 }
 
 main()
-new Worker('./lib/server.js')
+server()
