@@ -41,9 +41,9 @@ app.get('/', async (req, resp) => {
         items: {}
     };
 
-    for (const itemId in items) {
-        const item = items[itemId];
-        const points = item.points.reverse().slice(0, 150);
+    for(let item of items) {
+        const itemId = String(item.id)
+        const points = item.points.reverse().slice(0, 150)
 
         const filteredPriceOutliars = filterUnneeded(
             points.map((i: { price: any; }) => i.price)
