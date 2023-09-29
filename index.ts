@@ -6,15 +6,16 @@ import { sleep, repeat, print } from "./lib/globals.js"
 const getAllItems = async () => await db.item.findMany()
 
 const updateMissingItems = async () => {
-    const itemsStored = await getAllItems()
+    const itemsStored = (await getAllItems()).map((i) => String(i.id))
     const itemDetails = Object.values(await items.refreshItemDetails());
 
-    const missingItems = itemDetails
-        .filter(roliItem => !itemsStored.find(item => String(item.id) === roliItem.id));
+    const missingItems = 
+        itemDetails.filter(roliItem => !itemsStored.includes(roliItem.id));
 
     for (const missingItem of missingItems) {
         print(`Scraping missing data for "${missingItem.name}" [${missingItems.findIndex((item) => item.id === missingItem.id)}/${missingItems.length}]`);
-
+        
+        let startTime = Date.now()
         // fetch all points for the item from rolimons
         const allPoints = await items.fetchItemSales(missingItem.id);
         if (!allPoints) {
@@ -38,15 +39,26 @@ const updateMissingItems = async () => {
                     id: point.saleId,
                     timestamp: point.timestamp,
                     rap: point.rap,
-                    price: point.price
+                    price: point.price,
+                    Item: {
+                        connectOrCreate: {
+                            create: {
+                                id: Number(missingItem.id)
+                            },
+                            where: {
+                                id: Number(missingItem.id)
+                            }
+                        }
+                    }
                 }
             })
         }
 
         print(`Saved ${mappedPoints.length} points for "${missingItem.name}" (${missingItem.id})...`);
 
+        const timeWaited = (Date.now() - startTime)
         // courtesy sleep yw rolimon
-        await sleep(4 * 1000);
+        await sleep(timeWaited < 4000 ? 4000-timeWaited : 1)
     }
 };
 const handleNewSales = async () => {
@@ -82,7 +94,16 @@ const handleNewSales = async () => {
                 timestamp,
                 rap: newRap,
                 price: estimatedPrice,
-                itemId
+                Item: {
+                    connectOrCreate: {
+                        create: {
+                            id: itemId
+                        },
+                        where: {
+                            id: itemId
+                        }
+                    }
+                }
             }
         });
 
