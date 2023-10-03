@@ -33,25 +33,34 @@ const updateMissingItems = async () => {
             price: allPoints.sale_price_list[index],
         }));
 
+        await db.item.create({
+            data: {
+                id: Number(missingItem.id)
+            }
+        })
         for(let point of mappedPoints) {
-            await db.sale.create({
-                data: {
-                    id: point.saleId,
-                    timestamp: point.timestamp,
-                    rap: point.rap,
-                    price: point.price,
-                    Item: {
-                        connectOrCreate: {
-                            create: {
-                                id: Number(missingItem.id)
-                            },
-                            where: {
-                                id: Number(missingItem.id)
+            try {
+                await db.sale.create({
+                    data: {
+                        id: point.saleId,
+                        timestamp: point.timestamp,
+                        rap: point.rap,
+                        price: point.price,
+                        Item: {
+                            connectOrCreate: {
+                                create: {
+                                    id: Number(missingItem.id)
+                                },
+                                where: {
+                                    id: Number(missingItem.id)
+                                }
                             }
                         }
                     }
-                }
-            })
+                })
+            } catch (error) {
+                print(`sale ${point.saleId} already cached`, 'error')
+            }
         }
 
         print(`Saved ${mappedPoints.length} points for "${missingItem.name}" (${missingItem.id})...`);
@@ -80,32 +89,35 @@ const handleNewSales = async () => {
         })) continue; 
         const itemSales = await db.sale.findMany({
             where: {
-                itemId
+                id: saleId
             }
         })
-
-        // check if sale is a duplicate
-        if (itemSales.find((sale => String(sale.id) === saleId))) continue;
+        if(itemSales.length > 0) continue;
 
         const estimatedPrice = oldRap + (newRap - oldRap) * 10;
-        await db.sale.create({
-            data: {
-                id: saleId,
-                timestamp,
-                rap: newRap,
-                price: estimatedPrice,
-                Item: {
-                    connectOrCreate: {
-                        create: {
-                            id: itemId
-                        },
-                        where: {
-                            id: itemId
+        try {
+            await db.sale.create({
+                data: {
+                    id: saleId,
+                    timestamp,
+                    rap: newRap,
+                    price: estimatedPrice,
+                    Item: {
+                        connectOrCreate: {
+                            create: {
+                                id: itemId
+                            },
+                            where: {
+                                id: itemId
+                            }
                         }
                     }
                 }
-            }
-        });
+            });   
+        } catch (error) {
+            print(`got error adding saleid ${saleId}`, 'error')
+            console.log(error)
+        }
 
         print(`Found new sale for ${itemId} (${oldRap.toLocaleString()} -> ${newRap.toLocaleString()} | approx. ${estimatedPrice.toLocaleString()})`);
     }
