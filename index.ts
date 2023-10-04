@@ -129,7 +129,7 @@ const main = async () => {
 
     repeat(items.refreshItemDetails, 60 * 1000);
     repeat(updateMissingItems, 5 * 60 * 1000);
-    repeat(handleNewSales, 5 * 1000);
+    repeat(handleNewSales, 30 * 1000);
 }
 
 main()
